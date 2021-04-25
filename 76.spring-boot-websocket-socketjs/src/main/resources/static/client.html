@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>WebSocket客户端</title>
+    <!--att: html，css那些都不重要，重要的是我们引入了SockJS库-->
     <script src="https://cdn.bootcss.com/sockjs-client/0.3.4/sockjs.min.js"></script>
     <link href="https://cdn.bootcss.com/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -56,16 +57,21 @@
 
     let ws = null;
 
+    //att: 在connect()方法中，我们通过new SockJS(/connect)和上面的服务端建立了Socket通信
+    //att: SockJS对象包含几个常用的实用方法：
     function connect() {
         let targetUri = "/connect";
         ws = new SockJS(targetUri);
+        //att: onopen，和服务端讲了连接后的回调方法
         ws.onopen = function () {
             setConnected(true);
             log('和服务端连接成功！');
         };
+        //att: onmessage，服务端返回消息时的回调方法
         ws.onmessage = function (event) {
             log('服务端说：' + event.data);
         };
+        //att: onclose，和服务端断开连接的回调方法；
         ws.onclose = function () {
             setConnected(false);
             log('和服务端断开连接！')
@@ -74,6 +80,7 @@
 
     function sent() {
         if (ws != null) {
+            //send，发送消息给服务端
             ws.send(text.value);
             log('客户端说：' + text.value);
         } else {
@@ -83,6 +90,7 @@
 
     function disconnect() {
         if (ws != null) {
+            //close，断开和服务端的连接
             ws.close();
             ws = null;
         }
